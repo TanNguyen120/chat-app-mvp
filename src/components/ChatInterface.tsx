@@ -80,7 +80,7 @@ export default function ChatInterface({
           type='submit'
           className='bg-indigo-600 hover:bg-indigo-500 p-3 rounded-xl text-white transition-all active:scale-90'
         >
-          <Send className='w-5 h-5' />
+          <Send className='w-5 h-5' strokeWidth={1.5} />
         </button>
       </form>
     </div>

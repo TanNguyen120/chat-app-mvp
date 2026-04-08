@@ -1,6 +1,6 @@
 'use server';
 import { auth } from '@/auth';
-import { pusherServer } from '@/lib/pusher';
+import { pusherServer } from '@/lib/pusher-sever';
 import prisma from '@/lib/prisma';
 
 export async function sendMessage(roomId: string, text: string) {

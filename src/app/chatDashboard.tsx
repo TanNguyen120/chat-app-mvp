@@ -1,3 +1,4 @@
+'use client';
 import {
   Search,
   Phone,
@@ -14,8 +15,95 @@ import {
   Home,
   MessageCircle,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { pusherClient } from '@/lib/pusher-client';
+import Image from 'next/image';
+import { getChatRoomId } from '@/lib/utils';
+import { useSession } from 'next-auth/react';
+
+// 1. The data structure for a single user (matches your metadata in auth/route.ts)
+interface UserInfo {
+  name: string;
+  image: string;
+}
+
+// 2. The standard structure of a Pusher Presence Member
+interface PresenceMember {
+  id: string;
+  info: UserInfo;
+}
+
+// 3. The object returned by 'pusher:subscription_succeeded'
+interface PresenceMembers {
+  count: number;
+  each: (callback: (member: PresenceMember) => void) => void;
+  me: PresenceMember;
+  get: (id: string) => PresenceMember | null;
+}
 
 export default function ChatPage() {
+  const [activeRoom, setActiveRoom] = useState<string | null>(null);
+  const [selectedUser, setSelectedUser] = useState<PresenceMember | null>(null);
+  const [onlineUsers, setOnlineUsers] = useState<PresenceMember[]>([]);
+  // Get the current logged-in user from your session/auth
+  const { data: session } = useSession();
+
+  const currentUserId = session?.user?.id;
+
+  const handleUserClick = (targetUser: PresenceMember) => {
+    if (!currentUserId) return;
+
+    const roomId = getChatRoomId(currentUserId, targetUser.id);
+    setActiveRoom(roomId);
+    setSelectedUser(targetUser);
+  };
+  useEffect(() => {
+    if (!pusherClient) return;
+
+    console.log('Subscribing to presence-global...');
+    const channel = pusherClient.subscribe('presence-global');
+
+    // 1. Initial sync (When YOU join)
+    channel.bind(
+      'pusher:subscription_succeeded',
+      (members: PresenceMembers) => {
+        console.log('Success! Initial members:', members.count);
+        const initial: PresenceMember[] = [];
+        members.each((member: PresenceMember) => {
+          initial.push(member);
+        });
+        setOnlineUsers(initial);
+      },
+    );
+
+    // 2. New member joining (When OTHERS join)
+    channel.bind('pusher:member_added', (member: PresenceMember) => {
+      console.log('Member Joined:', member.info.name);
+      setOnlineUsers((prev) => {
+        // Prevent duplicates
+        if (prev.some((m) => m.id === member.id)) return prev;
+        return [...prev, member];
+      });
+    });
+
+    // 3. Member leaving
+    channel.bind('pusher:member_removed', (member: PresenceMember) => {
+      console.log('Member Left:', member.id);
+      setOnlineUsers((prev) => prev.filter((m) => m.id !== member.id));
+    });
+
+    // 4. Handle connection errors
+    pusherClient.connection.bind('error', (err: any) => {
+      console.error('Pusher Connection Error:', err);
+    });
+
+    return () => {
+      console.log('Unsubscribing...');
+      channel.unbind_all(); // Important: remove all listeners
+      pusherClient.unsubscribe('presence-global');
+    };
+  }, []);
+
   return (
     /* Main Background: #F7F9FB */
     <div className='flex h-screen w-full bg-[#F7F9FB] p-3 gap-3 font-sans text-[#111625]'>
@@ -29,14 +117,29 @@ export default function ChatPage() {
 
           {/* Nav Icons */}
           <div className='flex flex-col gap-8'>
-            <Home className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors' />
-            <MessageCircle className='w-6 h-6 text-[#1E9A80] cursor-pointer' />
-            <Users className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors' />
-            <Settings className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors' />
+            <Home
+              className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors'
+              strokeWidth={1.5}
+            />
+            <MessageCircle
+              className='w-6 h-6 text-[#1E9A80] cursor-pointer'
+              strokeWidth={1.5}
+            />
+            <Users
+              className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors'
+              strokeWidth={1.5}
+            />
+            <Settings
+              className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors'
+              strokeWidth={1.5}
+            />
           </div>
         </div>
 
-        <LogOut className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-red-500 transition-colors' />
+        <LogOut
+          className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-red-500 transition-colors'
+          strokeWidth={1.5}
+        />
       </nav>
 
       {/* Message List Sidebar */}
@@ -45,21 +148,24 @@ export default function ChatPage() {
           <div className='flex justify-between items-center'>
             <h2 className='text-[20px] font-bold'>All Message</h2>
             <button className='bg-[#1E9A80] text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium shadow-md'>
-              <PencilLine className='w-4 h-4' />
+              <PencilLine className='w-4 h-4' strokeWidth={1.5} />
               New Chat
             </button>
           </div>
 
           <div className='flex gap-3'>
             <div className='relative flex-1'>
-              <Search className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8796AF]' />
+              <Search
+                className='absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8796AF]'
+                strokeWidth={1.5}
+              />
               <input
                 placeholder='Search'
                 className='w-full bg-transparent border border-[#E8E5DF] rounded-xl py-2 pl-10 pr-4 text-sm outline-none focus:border-[#1E9A80]'
               />
             </div>
             <button className='p-2 border border-[#E8E5DF] rounded-xl hover:bg-slate-50'>
-              <Filter className='w-5 h-5 text-[#262626]' />
+              <Filter className='w-5 h-5 text-[#262626]' strokeWidth={1.5} />
             </button>
           </div>
         </div>
@@ -67,20 +173,56 @@ export default function ChatPage() {
         <div className='flex-1 overflow-y-auto px-4 space-y-2'>
           {/* Active Item Example */}
           <div className='flex items-center p-3 gap-3 bg-[#F3F3EE] rounded-2xl'>
-            <div className='w-14 h-14 bg-[#1E9A80] rounded-xl flex flex-col items-center justify-center text-white shrink-0'>
-              <MessageSquare className='w-5 h-5' />
-              <span className='text-[10px] font-bold'>Unread</span>
-            </div>
             <div className='flex-1 min-w-0'>
-              <div className='flex justify-between items-center'>
-                <h4 className='font-semibold text-sm'>Adrian Kurt</h4>
-                <span className='text-[11px] text-[#596881]'>3 mins ago</span>
-              </div>
-              <div className='flex justify-between items-center gap-1'>
-                <p className='text-xs text-[#8B8B8B] truncate'>
-                  Thanks for the explanation!
-                </p>
-                <CheckCheck className='w-3.5 h-3.5 text-[#8796AF]' />
+              <div className='flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-200px)]'>
+                {onlineUsers.map((member) => (
+                  <div
+                    onClick={() => handleUserClick(member)}
+                    key={member.id}
+                    className='flex items-center gap-3 group cursor-pointer hover:bg-slate-50 p-2 rounded-xl transition-colors'
+                  >
+                    {/* Avatar Container */}
+                    <div className='relative w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0 border border-[#E8E5DF]'>
+                      {member.info.image ? (
+                        <Image
+                          src={member.info.image}
+                          alt={member.info.name || 'User avatar'}
+                          fill
+                          sizes='40px'
+                          className='object-cover'
+                          unoptimized // Optional: keeps Google's original compression for faster MVP load
+                        />
+                      ) : (
+                        /* Fallback Initial if no image */
+                        <div className='w-full h-full flex items-center justify-center bg-[#F7F9FB] text-[#1E9A80] font-bold text-xs'>
+                          {member.info.name?.[0].toUpperCase()}
+                        </div>
+                      )}
+
+                      {/* Optional: Physical Online Dot */}
+                      <div className='absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#38C793] border-2 border-white rounded-full' />
+                    </div>
+
+                    {/* User Info */}
+                    <div className='min-w-0 flex-1'>
+                      <h3 className='font-bold text-sm text-[#111625] truncate'>
+                        {member.info.name}
+                      </h3>
+                      <span className='text-[11px] text-[#38C793] font-bold block'>
+                        Online
+                      </span>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Empty State */}
+                {onlineUsers.length === 0 && (
+                  <div className='text-center py-10'>
+                    <p className='text-xs text-[#8796AF]'>
+                      Waiting for others to join...
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -91,24 +233,20 @@ export default function ChatPage() {
       <main className='flex-1 bg-white rounded-[24px] shadow-sm flex flex-col overflow-hidden'>
         {/* Header with MISSING Action Icons */}
         <header className='px-6 py-4 border-b border-[#F7F9FB] flex justify-between items-center'>
-          <div className='flex items-center gap-3'>
-            <div className='w-10 h-10 rounded-full bg-slate-200 overflow-hidden'>
-              <img src='/api/placeholder/40/40' alt='avatar' />
-            </div>
-            <div>
-              <h3 className='font-bold text-sm'>Daniel CH</h3>
-              <span className='text-[11px] text-[#38C793] font-bold'>
-                Online
-              </span>
-            </div>
-          </div>
-
           {/* Header Action Icons */}
           <div className='flex items-center gap-3'>
-            <IconButton icon={<Search className='w-4 h-4' />} />
-            <IconButton icon={<Phone className='w-4 h-4' />} />
-            <IconButton icon={<Video className='w-4 h-4' />} />
-            <IconButton icon={<MoreHorizontal className='w-4 h-4' />} />
+            <IconButton
+              icon={<Search className='w-4 h-4' strokeWidth={1.5} />}
+            />
+            <IconButton
+              icon={<Phone className='w-4 h-4' strokeWidth={1.5} />}
+            />
+            <IconButton
+              icon={<Video className='w-4 h-4' strokeWidth={1.5} />}
+            />
+            <IconButton
+              icon={<MoreHorizontal className='w-4 h-4' strokeWidth={1.5} />}
+            />
           </div>
         </header>
 

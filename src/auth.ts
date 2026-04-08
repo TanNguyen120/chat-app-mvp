@@ -16,31 +16,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
-  events: {
-    async signIn({ user }) {
-      if (!user.id) return;
-
-      // 1. Ensure the 'Global' room exists
-      const globalRoom = await prisma.room.upsert({
-        where: { id: 'global-chat' }, // Giving it a fixed ID makes it easy to find
-        update: {},
-        create: {
-          id: 'global-chat',
-          name: 'Global Discussion',
-        },
-      });
-
-      // 2. Add the user to the room (connectOrCreate to avoid duplicates)
-      await prisma.room.update({
-        where: { id: 'global-chat' },
-        data: {
-          users: {
-            connect: { id: user.id },
-          },
-        },
-      });
-
-      console.log(`User ${user.name} auto-joined Global Chat`);
-    },
-  },
 });

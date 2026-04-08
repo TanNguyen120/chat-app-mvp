@@ -1,11 +1,14 @@
-import { createRoom } from '@/app/actions/room';
-import { PlusCircle } from 'lucide-react';
+import { SessionProvider } from 'next-auth/react';
 import ChatDashboard from './chatDashboard';
+import TopBar from './topBar';
 
 export default function ChatLobby() {
   return (
-    <div>
-      <ChatDashboard />
-    </div>
+    <SessionProvider>
+      <div>
+        <TopBar />
+        <ChatDashboard />
+      </div>
+    </SessionProvider>
   );
 }
