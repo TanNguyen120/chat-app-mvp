@@ -23,6 +23,7 @@ import { useSession } from 'next-auth/react';
 import MessageInput from './messageInput';
 import { getMessageHistory } from './actions/chat';
 import { ChatWindow } from './chatWindow';
+import UserList from '@/userList';
 
 // 1. The data structure for a single user (matches your metadata in auth/route.ts)
 interface UserInfo {
@@ -58,7 +59,7 @@ export default function ChatPage() {
 
     const roomId = getChatRoomId(currentUserId, targetUser.id);
     setActiveRoom(roomId);
-    console.log('Selected User:', targetUser.info.name, 'Room ID:', roomId);
+    console.log('Selected User:', targetUser, 'Room ID:', roomId);
     setSelectedUser(targetUser);
   };
   useEffect(() => {
@@ -176,60 +177,7 @@ export default function ChatPage() {
 
         <div className='flex-1 overflow-y-auto px-4 space-y-2'>
           {/* Active Item Example */}
-          <div className='flex items-center p-3 gap-3 bg-[#F3F3EE] rounded-2xl'>
-            <div className='flex-1 min-w-0'>
-              <div className='flex flex-col gap-4 overflow-y-auto max-h-[calc(100vh-200px)]'>
-                {onlineUsers.map((member) => (
-                  <div
-                    onClick={() => handleUserClick(member)}
-                    key={member.id}
-                    className='flex items-center gap-3 group cursor-pointer hover:bg-slate-50 p-2 rounded-xl transition-colors'
-                  >
-                    {/* Avatar Container */}
-                    <div className='relative w-10 h-10 rounded-full bg-slate-200 overflow-hidden shrink-0 border border-[#E8E5DF]'>
-                      {member.info.image ? (
-                        <Image
-                          src={member.info.image}
-                          alt={member.info.name || 'User avatar'}
-                          fill
-                          sizes='40px'
-                          className='object-cover'
-                          unoptimized // Optional: keeps Google's original compression for faster MVP load
-                        />
-                      ) : (
-                        /* Fallback Initial if no image */
-                        <div className='w-full h-full flex items-center justify-center bg-[#F7F9FB] text-[#1E9A80] font-bold text-xs'>
-                          {member.info.name?.[0].toUpperCase()}
-                        </div>
-                      )}
-
-                      {/* Optional: Physical Online Dot */}
-                      <div className='absolute bottom-0 right-0 w-2.5 h-2.5 bg-[#38C793] border-2 border-white rounded-full' />
-                    </div>
-
-                    {/* User Info */}
-                    <div className='min-w-0 flex-1'>
-                      <h3 className='font-bold text-sm text-[#111625] truncate'>
-                        {member.info.name}
-                      </h3>
-                      <span className='text-[11px] text-[#38C793] font-bold block'>
-                        Online
-                      </span>
-                    </div>
-                  </div>
-                ))}
-
-                {/* Empty State */}
-                {onlineUsers.length === 0 && (
-                  <div className='text-center py-10'>
-                    <p className='text-xs text-[#8796AF]'>
-                      Waiting for others to join...
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
+          <UserList onUserClick={handleUserClick} />
         </div>
       </aside>
 

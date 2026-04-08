@@ -1,7 +1,14 @@
 // src/app/login/page.tsx
 import { signIn } from '@/auth';
+import { redirect } from 'next/navigation';
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: { callbackUrl?: string };
+}) {
+  const callbackUrl = searchParams.callbackUrl || '/';
+
   return (
     <div className='flex min-h-screen bg-slate-950'>
       {/* Visual Side (The Surprise) */}
@@ -28,7 +35,7 @@ export default function LoginPage() {
           <form
             action={async () => {
               'use server';
-              await signIn('google', { redirectTo: '/' });
+              await signIn('google', { redirectTo: callbackUrl });
             }}
           >
             <button className='w-full flex items-center justify-center gap-3 bg-white hover:bg-slate-100 text-slate-900 font-semibold py-4 px-4 rounded-xl transition-all active:scale-[0.98]'>

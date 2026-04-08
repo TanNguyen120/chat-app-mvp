@@ -50,7 +50,7 @@ export default function MessageInput({ roomId }: MessageInputProps) {
       <button
         type='submit'
         disabled={!text.trim() || isSending}
-        className='flex items-center justify-center w-10 h-10 rounded-full bg-[#38C793] text-white hover:bg-[#2fb182] disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors shrink-0'
+        className=' flex items-center justify-center w-10 h-10 rounded-full bg-[#38C793] text-white hover:bg-[#2fb182] disabled:bg-slate-300 disabled:cursor-not-allowed transition-colors shrink-0'
       >
         <SendHorizontal
           size={18}
