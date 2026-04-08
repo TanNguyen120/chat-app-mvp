@@ -20,6 +20,9 @@ import { pusherClient } from '@/lib/pusher-client';
 import Image from 'next/image';
 import { getChatRoomId } from '@/lib/utils';
 import { useSession } from 'next-auth/react';
+import MessageInput from './messageInput';
+import { getMessageHistory } from './actions/chat';
+import { ChatWindow } from './chatWindow';
 
 // 1. The data structure for a single user (matches your metadata in auth/route.ts)
 interface UserInfo {
@@ -55,6 +58,7 @@ export default function ChatPage() {
 
     const roomId = getChatRoomId(currentUserId, targetUser.id);
     setActiveRoom(roomId);
+    console.log('Selected User:', targetUser.info.name, 'Room ID:', roomId);
     setSelectedUser(targetUser);
   };
   useEffect(() => {
@@ -230,7 +234,7 @@ export default function ChatPage() {
       </aside>
 
       {/* Main Message Box */}
-      <main className='flex-1 bg-white rounded-[24px] shadow-sm flex flex-col overflow-hidden'>
+      <main className='flex-1 bg-white rounded-[24px] shadow-sm flex flex-col overflow-hidden '>
         {/* Header with MISSING Action Icons */}
         <header className='px-6 py-4 border-b border-[#F7F9FB] flex justify-between items-center'>
           {/* Header Action Icons */}
@@ -250,9 +254,16 @@ export default function ChatPage() {
           </div>
         </header>
 
-        <div className='flex-1 bg-[#FDFDFB] p-6'>
-          {/* Chat content goes here */}
+        <div className=' bg-[#FDFDFB] p-6'>
+          {activeRoom ? (
+            <ChatWindow roomId={activeRoom} selectedUser={selectedUser!} />
+          ) : (
+            <div className='h-full flex flex-col items-center justify-center gap-4'>
+              Start chatting with someone!
+            </div>
+          )}
         </div>
+        <MessageInput roomId={activeRoom || ''} />
       </main>
     </div>
   );

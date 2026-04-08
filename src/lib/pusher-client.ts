@@ -1,15 +1,11 @@
-import Pusher from 'pusher-js';
+'use client';
+import PusherJS from 'pusher-js';
 
-// 1. Create a variable but don't initialize it immediately
-let pusherClientInstance: Pusher | null = null;
+const key = process.env.NEXT_PUBLIC_PUSHER_APP_KEY!;
+const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER!;
 
-// 2. Only initialize if we are in the browser
-if (typeof window !== 'undefined') {
-  pusherClientInstance = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
-    cluster: 'eu',
-    authEndpoint: '/api/pusher/auth',
-    authTransport: 'ajax',
-  });
-}
-
-export const pusherClient = pusherClientInstance as Pusher;
+export const pusherClient = new PusherJS(key, {
+  cluster: cluster,
+  authEndpoint: '/api/pusher/auth',
+  authTransport: 'ajax',
+});
