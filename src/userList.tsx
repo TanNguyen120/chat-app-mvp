@@ -6,6 +6,7 @@ import { getAllUsers } from '@/app/actions/users';
 import Image from 'next/image';
 import { format } from 'date-fns';
 import { formatChatTime } from './lib/utils';
+import ChatActionModal from './app/chatActionsModal';
 
 interface UserListProps {
   currentUserId: string;
@@ -217,28 +218,11 @@ export default function UserList({
       {/* Context Modal / Menu */}
       {contextMenu.visible && (
         <div
-          className='fixed z-[100] bg-white border border-[#E8E5DF] rounded-xl shadow-xl py-2 w-48 font-sans'
+          className='fixed z-[100]  py-2 w-48 font-sans'
           style={{ top: contextMenu.y, left: contextMenu.x }}
           onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
         >
-          <div className='px-4 py-2 border-b border-[#F7F9FB] mb-1'>
-            <p className='text-[10px] text-[#8796AF] font-bold uppercase tracking-widest'>
-              Actions
-            </p>
-            <p className='text-xs font-semibold truncate text-[#111625]'>
-              {contextMenu.user?.name}
-            </p>
-          </div>
-          <button className='w-full text-left px-4 py-2 text-sm text-[#262626] hover:bg-[#F7F9FB] transition-colors'>
-            View Profile
-          </button>
-          <button className='w-full text-left px-4 py-2 text-sm text-[#262626] hover:bg-[#F7F9FB] transition-colors'>
-            Mute Notifications
-          </button>
-          <div className='h-[1px] bg-[#F7F9FB] my-1' />
-          <button className='w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors'>
-            Block User
-          </button>
+          <ChatActionModal />
         </div>
       )}
     </div>
