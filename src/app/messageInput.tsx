@@ -7,22 +7,28 @@ import { useSession } from 'next-auth/react';
 
 interface MessageInputProps {
   roomId: string;
+  onMessageSent?: (content: string) => void;
 }
 
-export default function MessageInput({ roomId }: MessageInputProps) {
+export default function MessageInput({
+  roomId,
+  onMessageSent,
+}: MessageInputProps) {
   const [text, setText] = useState('');
   const [isSending, setIsSending] = useState(false);
   const session = useSession().data;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || isSending) return;
-    // pusher will handle real-time updates, so we just need to send the message to the server
+    const messageContent = text.trim();
+    if (!messageContent || isSending) return;
 
+    if (onMessageSent) onMessageSent(messageContent);
+    setText('');
     setIsSending(true);
+
     try {
-      await sendMessage(roomId, text);
-      setText('');
+      await sendMessage(roomId, messageContent);
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {

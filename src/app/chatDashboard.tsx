@@ -49,10 +49,27 @@ export default function ChatPage() {
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<PresenceMember | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<PresenceMember[]>([]);
+  const [messages, setMessages] = useState<any[]>([]);
+
   // Get the current logged-in user from your session/auth
   const { data: session } = useSession();
 
   const currentUserId = session?.user?.id;
+
+  const handleOptimisticMessage = (content: string) => {
+    if (!currentUserId || !session?.user) return;
+
+    const optimisticMsg = {
+      id: `temp-${Date.now()}`,
+      content,
+      senderId: currentUserId,
+      senderName: session.user.name,
+      senderImage: session.user.image,
+      createdAt: new Date(),
+    };
+
+    setMessages((prev) => [...prev, optimisticMsg]);
+  };
 
   const handleUserClick = (targetUser: PresenceMember) => {
     if (!currentUserId) return;
@@ -61,7 +78,9 @@ export default function ChatPage() {
     setActiveRoom(roomId);
     console.log('Selected User:', targetUser, 'Room ID:', roomId);
     setSelectedUser(targetUser);
+    setMessages([]); // Clear messages when switching chat rooms
   };
+
   useEffect(() => {
     if (!pusherClient) return;
 
@@ -208,14 +227,23 @@ export default function ChatPage() {
 
         <div className=' bg-[#FDFDFB] p-6'>
           {activeRoom ? (
-            <ChatWindow roomId={activeRoom} selectedUser={selectedUser!} />
+            <ChatWindow
+              roomId={activeRoom}
+              selectedUser={selectedUser!}
+              messages={messages}
+              setMessages={setMessages}
+              currentUserId={currentUserId || ''}
+            />
           ) : (
             <div className='h-full flex flex-col items-center justify-center gap-4'>
               Start chatting with someone!
             </div>
           )}
         </div>
-        <MessageInput roomId={activeRoom || ''} />
+        <MessageInput
+          roomId={activeRoom || ''}
+          onMessageSent={handleOptimisticMessage}
+        />
       </main>
     </div>
   );

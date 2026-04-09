@@ -5,6 +5,7 @@ import { pusherClient } from '@/lib/pusher-client';
 import { getAllUsers } from '@/app/actions/users';
 import Image from 'next/image';
 import { format } from 'date-fns';
+import { formatChatTime } from './lib/utils';
 
 interface UserListProps {
   currentUserId: string;
@@ -156,7 +157,7 @@ export default function UserList({
                   </p>
                   {user.lastMessageTime && (
                     <span className='text-[10px] text-slate-400 shrink-0'>
-                      {format(new Date(user.lastMessageTime), 'p')}
+                      {formatChatTime(new Date(user.lastMessageTime))}
                     </span>
                   )}
                 </div>
