@@ -296,7 +296,7 @@ export default function ChatPage() {
             </div>
           )}
         </div>
-        <div className=' pe-1'>
+        <div className=' pe-2'>
           <MessageInput
             roomId={activeRoom || ''}
             onMessageSent={handleOptimisticMessage}

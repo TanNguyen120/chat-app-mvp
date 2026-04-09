@@ -50,7 +50,7 @@ export default function MessageInput({
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder='Type a message...'
-        className='flex-1 h-10 px-4 bg-slate-100  text-sm focus:outline-none  transition-all '
+        className='flex-1 h-10 px-4 rounded-full text-sm focus:outline-none  transition-all '
       />
 
       <button
