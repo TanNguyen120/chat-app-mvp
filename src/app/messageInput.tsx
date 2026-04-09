@@ -5,15 +5,20 @@ import { Mic, Paperclip, SendHorizontal, Smile } from 'lucide-react'; // Optiona
 import { pusherServer } from '@/lib/pusher-sever';
 import { useSession } from 'next-auth/react';
 import EmojiPicker, { Theme } from 'emoji-picker-react';
+import { chatWithAI } from './actions/ai';
 
 interface MessageInputProps {
   roomId: string;
   onMessageSent?: (content: string) => void;
+  userId: string;
+  setThinking?: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export default function MessageInput({
   roomId,
   onMessageSent,
+  userId,
+  setThinking,
 }: MessageInputProps) {
   const [text, setText] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -49,10 +54,29 @@ export default function MessageInput({
     setIsSending(true);
 
     try {
-      await sendMessage(roomId, messageContent);
+      console.log(
+        'Submitting message from user:',
+        userId,
+        'Content:',
+        messageContent,
+      );
+      if (userId === 'AI_ASSISTANT') {
+        if (setThinking) {
+          setThinking(true);
+        }
+        // Call the AI action
+        console.log('Sending message to AI:');
+        await chatWithAI(roomId, messageContent);
+      } else {
+        // Call your normal sendMessage action
+        await sendMessage(roomId, messageContent);
+      }
     } catch (error) {
       console.error('Failed to send message:', error);
     } finally {
+      if (userId === 'AI_ASSISTANT' && setThinking) {
+        setThinking(false);
+      }
       setIsSending(false);
     }
   };

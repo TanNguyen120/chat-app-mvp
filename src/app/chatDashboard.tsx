@@ -24,6 +24,7 @@ import MessageInput from './messageInput';
 import { getMessageHistory } from './actions/chat';
 import { ChatWindow } from './chatWindow';
 import UserList from '@/userList';
+import { set } from 'date-fns';
 
 // 1. The data structure for a single user (matches your metadata in auth/route.ts)
 interface UserInfo {
@@ -51,6 +52,8 @@ export default function ChatPage() {
   const [onlineUsers, setOnlineUsers] = useState<PresenceMember[]>([]);
   const [initialUsers, setInitialUsers] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
+  const [targetUser, setTargetUser] = useState<PresenceMember | null>(null);
+  const [thinking, setThinking] = useState(false);
 
   // Get the current logged-in user from your session/auth
   const { data: session } = useSession();
@@ -74,6 +77,7 @@ export default function ChatPage() {
 
   const handleUserClick = (targetUser: PresenceMember) => {
     if (!currentUserId) return;
+    setTargetUser(targetUser);
 
     // Normalize the user object to match the PresenceMember structure (.info wrapper)
     const normalizedUser: PresenceMember = {
@@ -200,7 +204,7 @@ export default function ChatPage() {
             <h2 className='text-[20px] font-bold'>All Message</h2>
             <button className='bg-[#1E9A80] text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium shadow-md'>
               <PencilLine className='w-4 h-4' strokeWidth={1.5} />
-              New Chat
+              New Message
             </button>
           </div>
 
@@ -289,6 +293,8 @@ export default function ChatPage() {
               messages={messages}
               setMessages={setMessages}
               currentUserId={currentUserId || ''}
+              thinking={thinking}
+              setThinking={setThinking}
             />
           ) : (
             <div className='h-full flex flex-col items-center justify-center gap-4'>
@@ -300,6 +306,8 @@ export default function ChatPage() {
           <MessageInput
             roomId={activeRoom || ''}
             onMessageSent={handleOptimisticMessage}
+            userId={targetUser?.id || ''}
+            setThinking={setThinking}
           />
         </div>
       </main>

@@ -4,6 +4,7 @@ import { pusherClient } from '@/lib/pusher';
 import MessageBubble from '@/messageBubble';
 import { getMessageHistory } from './actions/chat';
 import { Message } from '@/generated/client/browser';
+import { ThinkingIndicator } from './thinkingIndicator';
 // 1. The data structure for a single user (matches your metadata in auth/route.ts)
 interface UserInfo {
   name: string;
@@ -29,12 +30,16 @@ export function ChatWindow({
   messages,
   setMessages,
   currentUserId,
+  thinking,
+  setThinking,
 }: {
   roomId: string;
   selectedUser: PresenceMember;
   messages: any[];
   setMessages: React.Dispatch<React.SetStateAction<any[]>>;
   currentUserId: string;
+  thinking: boolean;
+  setThinking: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -136,6 +141,8 @@ export function ChatWindow({
             isMe={m.senderId === currentUserId}
           />
         ))}
+        {/* Only show when waiting */}
+        {thinking && <ThinkingIndicator />}
       </div>
       {/* Input component goes here */}
     </div>

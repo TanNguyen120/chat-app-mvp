@@ -184,6 +184,11 @@ export default function UserList({
                 {!isOnline && (
                   <span className='absolute bottom-0 right-0 w-3.5 h-3.5 bg-gray-400 border-2 border-white rounded-full' />
                 )}
+                {user.id === 'AI_ASSISTANT' && (
+                  <div className='absolute -top-1 -right-1 bg-gradient-to-tr from-[#1E9A80] to-blue-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full border border-white'>
+                    AI
+                  </div>
+                )}
               </div>
 
               {/* Text Info */}
