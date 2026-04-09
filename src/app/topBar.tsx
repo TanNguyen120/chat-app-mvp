@@ -1,17 +1,34 @@
 'use client';
-import React from 'react';
-import { useSession } from 'next-auth/react';
+import React, { useState, useRef, useEffect } from 'react';
+import { useSession, signOut } from 'next-auth/react';
 import {
   MessageCircle,
   Search,
   Bell,
   Settings,
   ChevronDown,
+  LogOut,
 } from 'lucide-react';
 
 const TopBar = () => {
   // 1. Hook into the NextAuth session
   const { data: session } = useSession();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   return (
     <header className='flex flex-col items-start px-6 py-3 gap-[24px] w-full max-w-[1340px] h-[56px] bg-white rounded-[16px] self-stretch flex-none z-0 font-sans shadow-sm'>
@@ -68,27 +85,68 @@ const TopBar = () => {
           <div className='w-0 h-[20px] border border-[#E8E5DF] flex-none' />
 
           {/* DYNAMIC: profile-container (Google Image) */}
-          <div className='flex flex-row items-center gap-2 w-[56px] h-[32px] flex-none cursor-pointer group'>
-            <div className='w-8 h-8 bg-[#F7F9FB] rounded-full flex-none overflow-hidden relative border border-slate-100 group-hover:border-[#1E9A80] transition-colors'>
-              {/* Image from Google Session */}
-              {session?.user?.image ? (
-                <img
-                  src={session.user.image}
-                  alt={session.user.name || 'User'}
-                  className='object-cover w-full h-full'
-                  referrerPolicy='no-referrer' // Helps load Google images correctly
-                />
-              ) : (
-                // Fallback if no image (shows first initial)
-                <div className='absolute inset-0 bg-[#F7F9FB] flex items-center justify-center font-bold text-sm text-[#1E9A80]'>
-                  {session?.user?.name?.[0].toUpperCase() || '?'}
-                </div>
-              )}
+          <div className='relative' ref={dropdownRef}>
+            <div
+              className='flex flex-row items-center gap-2 w-[56px] h-[32px] flex-none cursor-pointer group'
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            >
+              <div className='w-8 h-8 bg-[#F7F9FB] rounded-full flex-none overflow-hidden relative border border-slate-100 group-hover:border-[#1E9A80] transition-colors'>
+                {/* Image from Google Session */}
+                {session?.user?.image ? (
+                  <img
+                    src={session.user.image}
+                    alt={session.user.name || 'User'}
+                    className='object-cover w-full h-full'
+                    referrerPolicy='no-referrer' // Helps load Google images correctly
+                  />
+                ) : (
+                  // Fallback if no image (shows first initial)
+                  <div className='absolute inset-0 bg-[#F7F9FB] flex items-center justify-center font-bold text-sm text-[#1E9A80]'>
+                    {session?.user?.name?.[0].toUpperCase() || '?'}
+                  </div>
+                )}
+              </div>
+              <ChevronDown
+                strokeWidth={2}
+                className={`w-4 h-4 text-[#262626] flex-none transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              />
             </div>
-            <ChevronDown
-              strokeWidth={2}
-              className='w-4 h-4 text-[#262626] flex-none'
-            />
+
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div className='absolute right-0 mt-2 w-48 bg-white border border-[#E8E5DF] rounded-xl shadow-lg py-2 z-50'>
+                <div className='px-4 py-2 border-b border-[#F7F9FB] mb-1'>
+                  <p className='text-xs text-[#8796AF] font-medium uppercase tracking-wider'>
+                    Account
+                  </p>
+                  <p className='text-sm font-semibold truncate'>
+                    {session?.user?.name}
+                  </p>
+                </div>
+
+                <button
+                  className='w-full flex items-center gap-3 px-4 py-2 text-sm text-[#262626] hover:bg-[#F7F9FB] transition-colors'
+                  onClick={() => setIsDropdownOpen(false)}
+                >
+                  <Settings
+                    className='w-4 h-4 text-[#596881]'
+                    strokeWidth={1.5}
+                  />
+                  Settings
+                </button>
+
+                <button
+                  className='w-full flex items-center gap-3 px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors'
+                  onClick={() => {
+                    setIsDropdownOpen(false);
+                    signOut();
+                  }}
+                >
+                  <LogOut className='w-4 h-4' strokeWidth={1.5} />
+                  Logout
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

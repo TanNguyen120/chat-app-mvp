@@ -11,16 +11,49 @@ interface UserListProps {
   currentUserId: string;
   onUserClick: (user: any) => void;
   activeRoomId?: string;
+  onLoad?: (users: any[]) => void;
 }
 
 export default function UserList({
   currentUserId,
   onUserClick,
   activeRoomId,
+  onLoad,
 }: UserListProps) {
   const [users, setUsers] = useState<any[]>([]);
   const [onlineUserIds, setOnlineUserIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    visible: boolean;
+    user: any | null;
+  }>({ x: 0, y: 0, visible: false, user: null });
+
+  // Handle right-click to open custom menu
+  const handleContextMenu = (e: React.MouseEvent, user: any) => {
+    e.preventDefault();
+    e.stopPropagation(); // Stop the event from reaching the window listener
+
+    setContextMenu({
+      x: e.clientX,
+      y: e.clientY,
+      visible: true,
+      user,
+    });
+  };
+
+  // Close menu on normal click
+  useEffect(() => {
+    const closeMenu = () =>
+      setContextMenu((prev) => ({ ...prev, visible: false }));
+    window.addEventListener('click', closeMenu);
+    window.addEventListener('contextmenu', closeMenu); // Close if right-clicking elsewhere
+    return () => {
+      window.removeEventListener('click', closeMenu);
+      window.removeEventListener('contextmenu', closeMenu);
+    };
+  }, []);
 
   // 1. Initial Load: Get all users and their last messages from DB
   useEffect(() => {
@@ -28,6 +61,7 @@ export default function UserList({
       try {
         const data = await getAllUsers();
         setUsers(data);
+        if (onLoad) onLoad(data);
       } catch (error) {
         console.error('Failed to load users:', error);
       } finally {
@@ -35,7 +69,7 @@ export default function UserList({
       }
     };
     loadUsers();
-  }, []);
+  }, [onLoad]);
 
   // 2. Real-time Presence & Message Updates
   useEffect(() => {
@@ -127,6 +161,7 @@ export default function UserList({
             <button
               key={user.id}
               onClick={() => onUserClick(user)}
+              onContextMenu={(e) => handleContextMenu(e, user)}
               className={`flex items-center gap-3 p-3 w-full rounded-2xl transition-all text-left group ${
                 isActive ? 'bg-blue-50' : 'hover:bg-slate-50'
               }`}
@@ -144,6 +179,9 @@ export default function UserList({
                 </div>
                 {isOnline && (
                   <span className='absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full' />
+                )}
+                {!isOnline && (
+                  <span className='absolute bottom-0 right-0 w-3.5 h-3.5 bg-gray-400 border-2 border-white rounded-full' />
                 )}
               </div>
 
@@ -175,6 +213,34 @@ export default function UserList({
           );
         })}
       </div>
+
+      {/* Context Modal / Menu */}
+      {contextMenu.visible && (
+        <div
+          className='fixed z-[100] bg-white border border-[#E8E5DF] rounded-xl shadow-xl py-2 w-48 font-sans'
+          style={{ top: contextMenu.y, left: contextMenu.x }}
+          onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside
+        >
+          <div className='px-4 py-2 border-b border-[#F7F9FB] mb-1'>
+            <p className='text-[10px] text-[#8796AF] font-bold uppercase tracking-widest'>
+              Actions
+            </p>
+            <p className='text-xs font-semibold truncate text-[#111625]'>
+              {contextMenu.user?.name}
+            </p>
+          </div>
+          <button className='w-full text-left px-4 py-2 text-sm text-[#262626] hover:bg-[#F7F9FB] transition-colors'>
+            View Profile
+          </button>
+          <button className='w-full text-left px-4 py-2 text-sm text-[#262626] hover:bg-[#F7F9FB] transition-colors'>
+            Mute Notifications
+          </button>
+          <div className='h-[1px] bg-[#F7F9FB] my-1' />
+          <button className='w-full text-left px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition-colors'>
+            Block User
+          </button>
+        </div>
+      )}
     </div>
   );
 }

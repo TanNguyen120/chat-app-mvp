@@ -19,7 +19,7 @@ import { useEffect, useState } from 'react';
 import { pusherClient } from '@/lib/pusher-client';
 import Image from 'next/image';
 import { getChatRoomId } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import MessageInput from './messageInput';
 import { getMessageHistory } from './actions/chat';
 import { ChatWindow } from './chatWindow';
@@ -49,6 +49,7 @@ export default function ChatPage() {
   const [activeRoom, setActiveRoom] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<PresenceMember | null>(null);
   const [onlineUsers, setOnlineUsers] = useState<PresenceMember[]>([]);
+  const [initialUsers, setInitialUsers] = useState<any[]>([]);
   const [messages, setMessages] = useState<any[]>([]);
 
   // Get the current logged-in user from your session/auth
@@ -80,6 +81,20 @@ export default function ChatPage() {
     setSelectedUser(targetUser);
     setMessages([]); // Clear messages when switching chat rooms
   };
+
+  // Auto-select the top user from the list once session and users are loaded
+  useEffect(() => {
+    if (initialUsers.length > 0 && currentUserId && !activeRoom) {
+      const topUser = initialUsers[0];
+      handleUserClick({
+        id: topUser.id,
+        info: {
+          name: topUser.name,
+          image: topUser.image || '',
+        },
+      });
+    }
+  }, [initialUsers, currentUserId, activeRoom]);
 
   useEffect(() => {
     if (!pusherClient) return;
@@ -163,6 +178,7 @@ export default function ChatPage() {
         <LogOut
           className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-red-500 transition-colors'
           strokeWidth={1.5}
+          onClick={() => signOut({ callbackUrl: '/login' })}
         />
       </nav>
 
@@ -200,6 +216,7 @@ export default function ChatPage() {
             onUserClick={handleUserClick}
             currentUserId={currentUserId || ''}
             activeRoomId={activeRoom || undefined}
+            onLoad={setInitialUsers}
           />
         </div>
       </aside>

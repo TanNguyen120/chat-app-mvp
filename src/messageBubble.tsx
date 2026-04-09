@@ -37,10 +37,10 @@ export default function MessageBubble({ message, isMe }: MessageBubbleProps) {
         {/* Bubble Content */}
         <div className={`flex flex-col ${isMe ? 'items-end' : 'items-start'}`}>
           <div
-            className={`px-4 py-2.5 rounded-2xl text-sm shadow-sm ${
+            className={`px-4 py-2.5 rounded-[20px] text-sm shadow-sm ${
               isMe
-                ? 'bg-[#38C793] text-white rounded-tr-none'
-                : 'bg-white border border-slate-200 text-slate-800 rounded-tl-none'
+                ? 'bg-[#F0FDF4] text-[#111625]'
+                : 'bg-white border border-[#E8E5DF] text-[#111625]'
             }`}
           >
             {message.content}
