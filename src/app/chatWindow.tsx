@@ -120,7 +120,7 @@ export function ChatWindow({
   }, [roomId]); // Reloads everything when the room changes
 
   return (
-    <div className='flex flex-col h-full max-h-[calc(100vh-220px)] bg-white'>
+    <div className='flex flex-col h-full min-h-0 bg-transparent'>
       <div
         ref={scrollRef}
         className='flex-1 overflow-y-auto p-4 space-y-4 min-h-0'

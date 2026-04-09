@@ -75,10 +75,21 @@ export default function ChatPage() {
   const handleUserClick = (targetUser: PresenceMember) => {
     if (!currentUserId) return;
 
-    const roomId = getChatRoomId(currentUserId, targetUser.id);
+    // Normalize the user object to match the PresenceMember structure (.info wrapper)
+    const normalizedUser: PresenceMember = {
+      id: targetUser.id,
+      info: targetUser.info || {
+        name: (targetUser as any).name,
+        image: (targetUser as any).image || '',
+      },
+    };
+
+    const roomId = getChatRoomId(currentUserId, normalizedUser.id);
+    if (roomId === activeRoom) return;
+
     setActiveRoom(roomId);
-    console.log('Selected User:', targetUser, 'Room ID:', roomId);
-    setSelectedUser(targetUser);
+    console.log('Selected User:', normalizedUser, 'Room ID:', roomId);
+    setSelectedUser(normalizedUser);
     setMessages([]); // Clear messages when switching chat rooms
   };
 
@@ -145,7 +156,7 @@ export default function ChatPage() {
 
   return (
     /* Main Background: #F7F9FB */
-    <div className='flex h-screen w-full bg-[#F7F9FB] p-3 gap-3 font-sans text-[#111625]'>
+    <div className='flex h-full w-full p-3 pt-0 gap-3 font-sans text-[#111625] overflow-hidden'>
       {/* MISSING: Left Navigation Sidebar */}
       <nav className='w-[72px] flex flex-col items-center py-8 justify-between bg-white rounded-[24px] shadow-sm flex-none'>
         <div className='flex flex-col items-center gap-10'>
@@ -184,7 +195,7 @@ export default function ChatPage() {
 
       {/* Message List Sidebar */}
       <aside className='w-[400px] bg-white rounded-[24px] shadow-sm flex flex-col overflow-hidden'>
-        <div className='p-6 space-y-6'>
+        <div className='p-6 pb-4 space-y-6 flex-none'>
           <div className='flex justify-between items-center'>
             <h2 className='text-[20px] font-bold'>All Message</h2>
             <button className='bg-[#1E9A80] text-white px-4 py-2 rounded-lg flex items-center gap-2 text-sm font-medium shadow-md'>
@@ -210,7 +221,7 @@ export default function ChatPage() {
           </div>
         </div>
 
-        <div className='flex-1 overflow-y-auto px-4 space-y-2'>
+        <div className='flex-1 min-h-0 px-4'>
           {/* Active Item Example */}
           <UserList
             onUserClick={handleUserClick}
@@ -223,8 +234,36 @@ export default function ChatPage() {
 
       {/* Main Message Box */}
       <main className='flex-1 bg-white rounded-[24px] shadow-sm flex flex-col overflow-hidden '>
-        {/* Header with MISSING Action Icons */}
         <header className='px-6 py-4 border-b border-[#F7F9FB] flex justify-between items-center'>
+          {/* Header User Profile & Status */}
+          <div className='flex items-center gap-3'>
+            {selectedUser && (
+              <>
+                <div className='w-10 h-10 rounded-full overflow-hidden border border-[#E8E5DF]'>
+                  <Image
+                    src={selectedUser.info.image || '/default-avatar.png'}
+                    alt={selectedUser.info.name}
+                    width={40}
+                    height={40}
+                    className='object-cover'
+                  />
+                </div>
+                <div className='flex flex-col'>
+                  <h3 className='text-sm font-bold text-[#111625] leading-tight'>
+                    {selectedUser.info.name}
+                  </h3>
+                  <span
+                    className={`text-[11px] font-medium ${onlineUsers.some((u) => u.id === selectedUser.id) ? 'text-[#1E9A80]' : 'text-[#8796AF]'}`}
+                  >
+                    {onlineUsers.some((u) => u.id === selectedUser.id)
+                      ? 'Online'
+                      : 'Offline'}
+                  </span>
+                </div>
+              </>
+            )}
+          </div>
+
           {/* Header Action Icons */}
           <div className='flex items-center gap-3'>
             <IconButton
@@ -242,7 +281,7 @@ export default function ChatPage() {
           </div>
         </header>
 
-        <div className=' bg-[#FDFDFB] p-6'>
+        <div className='flex-1 min-h-0 bg-[#FDFDFB]'>
           {activeRoom ? (
             <ChatWindow
               roomId={activeRoom}
@@ -257,10 +296,12 @@ export default function ChatPage() {
             </div>
           )}
         </div>
-        <MessageInput
-          roomId={activeRoom || ''}
-          onMessageSent={handleOptimisticMessage}
-        />
+        <div className=' pe-1'>
+          <MessageInput
+            roomId={activeRoom || ''}
+            onMessageSent={handleOptimisticMessage}
+          />
+        </div>
       </main>
     </div>
   );

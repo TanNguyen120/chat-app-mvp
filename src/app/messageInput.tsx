@@ -43,7 +43,7 @@ export default function MessageInput({
     */
     <form
       onSubmit={handleSubmit}
-      className='flex flex-row items-center p-1 gap-3 self-stretch w-full rounded-full h-12 bg-white m-1 border-1 border-[#E8E5DF]'
+      className='flex flex-row items-center p-1 me-3 gap-3 self-stretch w-full rounded-full h-12 bg-white m-1 border-1 border-[#E8E5DF]'
     >
       <input
         type='text'
