@@ -8,6 +8,39 @@ const genAI = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 });
 
+// Helper to wait for a specific time
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+export async function withRetry<T>(
+  fn: () => Promise<T>,
+  maxRetries = 3,
+  initialDelay = 1000,
+): Promise<T> {
+  let lastError: any;
+
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      return await fn();
+    } catch (error: any) {
+      lastError = error;
+
+      // Check if it's a Rate Limit (429) or Server Error (500/503)
+      const isRetryable = error.status === 429 || error.status >= 500;
+
+      if (!isRetryable || i === maxRetries - 1) throw error;
+
+      // Calculate delay: initialDelay * 2^attempt + random jitter
+      const delay = initialDelay * Math.pow(2, i) + Math.random() * 1000;
+
+      console.log(
+        `⚠️ Rate limited. Retrying in ${Math.round(delay)}ms... (Attempt ${i + 1})`,
+      );
+      await sleep(delay);
+    }
+  }
+  throw lastError;
+}
+
 export async function chatWithAI(roomId: string, userMessage: string) {
   const session = await auth();
   if (!session?.user?.id) throw new Error('Unauthorized');
@@ -42,13 +75,11 @@ export async function chatWithAI(roomId: string, userMessage: string) {
   try {
     // 1. Generate Response
 
-    const response = await genAI.models.generateContent({
-      model: 'gemini-2.5-flash',
-      contents: [{ role: 'user', parts: [{ text: userMessage }] }],
-      // Optional: Add your system instructions here if needed
-      config: {
-        systemInstruction: 'You are the QuickTalk AI. Be concise.',
-      },
+    const response = await withRetry(async () => {
+      return await genAI.models.generateContent({
+        model: 'gemini-3.1-flash-lite-preview', // Lite handles traffic better!
+        contents: [{ role: 'user', parts: [{ text: userMessage }] }],
+      });
     });
 
     const aiResponse = response.text;
