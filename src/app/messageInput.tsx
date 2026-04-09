@@ -1,9 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { sendMessage } from '@/app/actions/chat';
-import { SendHorizontal } from 'lucide-react'; // Optional: for a nice icon
+import { Mic, Paperclip, SendHorizontal, Smile } from 'lucide-react'; // Optional: for a nice icon
 import { pusherServer } from '@/lib/pusher-sever';
 import { useSession } from 'next-auth/react';
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 
 interface MessageInputProps {
   roomId: string;
@@ -16,7 +17,27 @@ export default function MessageInput({
 }: MessageInputProps) {
   const [text, setText] = useState('');
   const [isSending, setIsSending] = useState(false);
-  const session = useSession().data;
+
+  const [showEmoji, setShowEmoji] = useState(false);
+  const pickerRef = useRef<HTMLDivElement>(null);
+
+  // Close picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        pickerRef.current &&
+        !pickerRef.current.contains(event.target as Node)
+      ) {
+        setShowEmoji(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const onEmojiClick = (emojiData: any) => {
+    setText((prev) => prev + emojiData.emoji);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +73,29 @@ export default function MessageInput({
         placeholder='Type a message...'
         className='flex-1 h-10 px-4 rounded-full text-sm focus:outline-none  transition-all '
       />
+
+      {showEmoji && (
+        <div
+          ref={pickerRef}
+          className='absolute bottom-16 right-4 z-50 shadow-2xl border rounded-2xl overflow-hidden'
+        >
+          <EmojiPicker
+            onEmojiClick={onEmojiClick}
+            theme={Theme.LIGHT}
+            lazyLoadEmojis={true}
+            searchPlaceholder='Search emoji...'
+            width={350}
+            height={400}
+          />
+        </div>
+      )}
+      <Mic size={18} className=' cursor-pointer fw-bold' />
+      <Smile
+        size={20}
+        className=' cursor-pointer hover:text-[#1E9A80] transition-colors'
+        onClick={() => setShowEmoji(!showEmoji)}
+      />
+      <Paperclip size={18} className=' cursor-pointer fw-bold' />
 
       <button
         type='submit'
