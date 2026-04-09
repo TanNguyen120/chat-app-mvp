@@ -177,7 +177,11 @@ export default function ChatPage() {
 
         <div className='flex-1 overflow-y-auto px-4 space-y-2'>
           {/* Active Item Example */}
-          <UserList onUserClick={handleUserClick} />
+          <UserList
+            onUserClick={handleUserClick}
+            currentUserId={currentUserId || ''}
+            activeRoomId={activeRoom || undefined}
+          />
         </div>
       </aside>
 

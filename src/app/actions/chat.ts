@@ -43,6 +43,13 @@ export async function sendMessage(roomId: string, text: string) {
     createdAt: new Date().toISOString(),
   });
 
+  // Add a trigger for the recipient specifically
+  await pusherServer.trigger(`user-${session.user.id}`, 'sidebar-update', {
+    roomId: roomId,
+    content: text,
+    senderId: session.user.id,
+  });
+
   return dbMessage;
 }
 
