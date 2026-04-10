@@ -141,6 +141,24 @@ export default function UserList({
     };
   }, [users, currentUserId]);
 
+  useEffect(() => {
+    // 1. Subscribe to the global list channel
+    const channel = pusherClient.subscribe('global-user-list');
+
+    // 2. Listen for the brand new user event
+    channel.bind('new-user', (newUser: any) => {
+      setUsers((prev) => {
+        // Prevent duplicates if multiple events fire
+        if (prev.find((u) => u.id === newUser.id)) return prev;
+        return [...prev, newUser];
+      });
+    });
+
+    return () => {
+      pusherClient.unsubscribe('global-user-list');
+    };
+  }, []);
+
   if (isLoading) {
     return (
       <div className='p-4 text-slate-400 text-sm'>Loading contacts...</div>
