@@ -1,6 +1,13 @@
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { formatDistanceToNow, format, differenceInDays } from 'date-fns';
+import {
+  generateUploadButton,
+  generateUploadDropzone,
+  generateReactHelpers,
+} from '@uploadthing/react';
+// ⚠️ Import the type from your actual core.ts file
+import type { OurFileRouter } from '@/app/api/uploadthing/core';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -38,3 +45,10 @@ export function formatChatTime(date: Date | string | number | null): string {
     return format(d, 'MMM dd, yyyy');
   }
 }
+
+export const UploadButton = generateUploadButton<OurFileRouter>();
+export const UploadDropzone = generateUploadDropzone<OurFileRouter>();
+
+// This is the hook we'll use in your MessageInput component
+export const { useUploadThing, uploadFiles } =
+  generateReactHelpers<OurFileRouter>();

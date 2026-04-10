@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { ImageDisplay } from './app/imageDisplay';
 
 interface Message {
   id: string;
@@ -7,11 +8,32 @@ interface Message {
   senderName: string | null;
   senderImage: string | null;
   createdAt: Date;
+  type?: 'TEXT' | 'IMAGE' | 'FILE' | 'VIDEO';
+  imageUrl?: string; // For IMAGE, FILE, VIDEO types
 }
 
 interface MessageBubbleProps {
   message: Message;
   isMe: boolean;
+}
+
+function showMessageContent(message: Message) {
+  console.log('Rendering message content for message:', message);
+  switch (message.type) {
+    case 'IMAGE':
+      return (
+        <>
+          <ImageDisplay src={message.imageUrl || ''} />
+          {message.content && <p className='text-sm mt-1'>{message.content}</p>}
+        </>
+      );
+    case 'FILE':
+      return <div>Not support yet</div>;
+    case 'VIDEO':
+      return <div>Not support yet</div>;
+    default:
+      return <p className='text-sm'>{message.content}</p>;
+  }
 }
 
 export default function MessageBubble({ message, isMe }: MessageBubbleProps) {
@@ -51,7 +73,7 @@ export default function MessageBubble({ message, isMe }: MessageBubbleProps) {
                 : 'bg-white border border-[#E8E5DF] text-[#111625]'
             }`}
           >
-            {message.content}
+            {showMessageContent(message)}
           </div>
 
           {/* Timestamp */}

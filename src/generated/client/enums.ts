@@ -9,7 +9,12 @@
 * 🟢 You can import this file directly.
 */
 
+export const MessageType = {
+  TEXT: 'TEXT',
+  IMAGE: 'IMAGE',
+  FILE: 'FILE',
+  VIDEO: 'VIDEO',
+  AUDIO: 'AUDIO'
+} as const
 
-
-// This file is empty because there are no enums in the schema.
-export {}
+export type MessageType = (typeof MessageType)[keyof typeof MessageType]

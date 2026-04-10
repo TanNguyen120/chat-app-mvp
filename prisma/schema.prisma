@@ -52,9 +52,21 @@ model RoomMember {
   @@unique([userId, roomId]) // Prevents a user from joining the same room twice
 }
 
+enum MessageType {
+  TEXT
+  IMAGE
+  FILE
+  VIDEO
+  AUDIO
+}
+
+
+
 model Message {
   id        String   @id @default(cuid())
   content   String   @db.Text
+  imageUrl  String?     // You might want to rename this to 'fileUrl' later
+  type      MessageType @default(TEXT) // 👈 Default to TEXT
   createdAt DateTime @default(now())
   
   // Foreign Keys

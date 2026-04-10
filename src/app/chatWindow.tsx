@@ -66,6 +66,8 @@ export function ChatWindow({
           senderName: m.user.name,
           senderImage: m.user.image,
           createdAt: m.createdAt,
+          type: m.type || 'TEXT', // Default to TEXT if type is missing
+          imageUrl: m.imageUrl || null, // For image messages, if you have this field in your schema
         }));
         setMessages(formatted);
         console.log('Loaded history for room', roomId, formatted);
@@ -95,6 +97,8 @@ export function ChatWindow({
           senderName: incomingMsg.user?.name || incomingMsg.senderName,
           senderImage: incomingMsg.user?.image || incomingMsg.senderImage,
           createdAt: incomingMsg.createdAt,
+          type: incomingMsg.type || 'TEXT',
+          imageUrl: incomingMsg.imageUrl || null,
         };
 
         // Deduplication Logic for Optimistic Updates:

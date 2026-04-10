@@ -926,6 +926,8 @@ export type RoomMemberScalarFieldEnum = (typeof RoomMemberScalarFieldEnum)[keyof
 export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
+  imageUrl: 'imageUrl',
+  type: 'type',
   createdAt: 'createdAt',
   userId: 'userId',
   roomId: 'roomId'
@@ -1024,6 +1026,20 @@ export type ListDateTimeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
  * Reference to a field of type 'Boolean'
  */
 export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
+    
+
+
+/**
+ * Reference to a field of type 'MessageType'
+ */
+export type EnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType'>
+    
+
+
+/**
+ * Reference to a field of type 'MessageType[]'
+ */
+export type ListEnumMessageTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'MessageType[]'>
     
 
 

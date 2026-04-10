@@ -65,3 +65,34 @@ export async function getMessageHistory(roomId: string) {
     take: 50, // Limit to last 50 messages for performance
   });
 }
+
+export async function sendImageMessage(
+  roomId: string,
+  imageUrl: string,
+  content: string,
+) {
+  const session = await auth();
+  if (!session?.user) throw new Error('Unauthorized');
+  // 1. Guard Clause: This ensures userId is not undefined for the rest of the function
+  if (!session?.user?.id) {
+    throw new Error('You must be logged in to send messages');
+  }
+  // 1. Save to Database
+  const newMessage = await prisma.message.create({
+    data: {
+      content: content,
+      type: 'IMAGE', // Content is empty because it's an image
+      imageUrl: imageUrl,
+      roomId: roomId,
+      userId: session.user.id,
+    },
+    include: {
+      user: true, // Include user info for the UI
+    },
+  });
+
+  // 2. Trigger Pusher so other users see it instantly
+  await pusherServer.trigger(roomId, 'new-message', newMessage);
+
+  return newMessage;
+}

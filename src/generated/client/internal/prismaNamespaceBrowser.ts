@@ -109,6 +109,8 @@ export type RoomMemberScalarFieldEnum = (typeof RoomMemberScalarFieldEnum)[keyof
 export const MessageScalarFieldEnum = {
   id: 'id',
   content: 'content',
+  imageUrl: 'imageUrl',
+  type: 'type',
   createdAt: 'createdAt',
   userId: 'userId',
   roomId: 'roomId'

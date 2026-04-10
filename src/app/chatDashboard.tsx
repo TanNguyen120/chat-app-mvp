@@ -60,16 +60,18 @@ export default function ChatPage() {
 
   const currentUserId = session?.user?.id;
 
-  const handleOptimisticMessage = (content: string) => {
+  const handleOptimisticMessage = (content: string, imageUrl?: string) => {
     if (!currentUserId || !session?.user) return;
 
     const optimisticMsg = {
       id: `temp-${Date.now()}`,
       content,
+      imageUrl: imageUrl || null,
       senderId: currentUserId,
       senderName: session.user.name,
       senderImage: session.user.image,
       createdAt: new Date(),
+      type: imageUrl ? 'IMAGE' : 'TEXT',
     };
 
     setMessages((prev) => [...prev, optimisticMsg]);
@@ -160,43 +162,7 @@ export default function ChatPage() {
 
   return (
     /* Main Background: #F7F9FB */
-    <div className='flex h-full w-full p-3 pt-0 gap-3 font-sans text-[#111625] overflow-hidden'>
-      {/* MISSING: Left Navigation Sidebar */}
-      <nav className='w-[72px] flex flex-col items-center py-8 justify-between bg-white rounded-[24px] shadow-sm flex-none'>
-        <div className='flex flex-col items-center gap-10'>
-          {/* Logo */}
-          <div className='w-10 h-10 bg-[#1E9A80] rounded-xl flex items-center justify-center shadow-lg shadow-[#1E9A80]/20'>
-            <div className='w-5 h-5 bg-white rounded-full' />
-          </div>
-
-          {/* Nav Icons */}
-          <div className='flex flex-col gap-8'>
-            <Home
-              className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors'
-              strokeWidth={1.5}
-            />
-            <MessageCircle
-              className='w-6 h-6 text-[#1E9A80] cursor-pointer'
-              strokeWidth={1.5}
-            />
-            <Users
-              className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors'
-              strokeWidth={1.5}
-            />
-            <Settings
-              className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-[#1E9A80] transition-colors'
-              strokeWidth={1.5}
-            />
-          </div>
-        </div>
-
-        <LogOut
-          className='w-6 h-6 text-[#8796AF] cursor-pointer hover:text-red-500 transition-colors'
-          strokeWidth={1.5}
-          onClick={() => signOut({ callbackUrl: '/login' })}
-        />
-      </nav>
-
+    <div className='flex flex-1 flex-sm-column h-full w-full p-3 pt-0 gap-3 font-sans text-[#111625] overflow-hidden'>
       {/* Message List Sidebar */}
       <aside className='w-[400px] bg-white rounded-[24px] shadow-sm flex flex-col overflow-hidden'>
         <div className='p-6 pb-4 space-y-6 flex-none'>

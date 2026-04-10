@@ -27,6 +27,8 @@ export type AggregateMessage = {
 export type MessageMinAggregateOutputType = {
   id: string | null
   content: string | null
+  imageUrl: string | null
+  type: $Enums.MessageType | null
   createdAt: Date | null
   userId: string | null
   roomId: string | null
@@ -35,6 +37,8 @@ export type MessageMinAggregateOutputType = {
 export type MessageMaxAggregateOutputType = {
   id: string | null
   content: string | null
+  imageUrl: string | null
+  type: $Enums.MessageType | null
   createdAt: Date | null
   userId: string | null
   roomId: string | null
@@ -43,6 +47,8 @@ export type MessageMaxAggregateOutputType = {
 export type MessageCountAggregateOutputType = {
   id: number
   content: number
+  imageUrl: number
+  type: number
   createdAt: number
   userId: number
   roomId: number
@@ -53,6 +59,8 @@ export type MessageCountAggregateOutputType = {
 export type MessageMinAggregateInputType = {
   id?: true
   content?: true
+  imageUrl?: true
+  type?: true
   createdAt?: true
   userId?: true
   roomId?: true
@@ -61,6 +69,8 @@ export type MessageMinAggregateInputType = {
 export type MessageMaxAggregateInputType = {
   id?: true
   content?: true
+  imageUrl?: true
+  type?: true
   createdAt?: true
   userId?: true
   roomId?: true
@@ -69,6 +79,8 @@ export type MessageMaxAggregateInputType = {
 export type MessageCountAggregateInputType = {
   id?: true
   content?: true
+  imageUrl?: true
+  type?: true
   createdAt?: true
   userId?: true
   roomId?: true
@@ -150,6 +162,8 @@ export type MessageGroupByArgs<ExtArgs extends runtime.Types.Extensions.Internal
 export type MessageGroupByOutputType = {
   id: string
   content: string
+  imageUrl: string | null
+  type: $Enums.MessageType
   createdAt: Date
   userId: string
   roomId: string
@@ -179,6 +193,8 @@ export type MessageWhereInput = {
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   id?: Prisma.StringFilter<"Message"> | string
   content?: Prisma.StringFilter<"Message"> | string
+  imageUrl?: Prisma.StringNullableFilter<"Message"> | string | null
+  type?: Prisma.EnumMessageTypeFilter<"Message"> | $Enums.MessageType
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   userId?: Prisma.StringFilter<"Message"> | string
   roomId?: Prisma.StringFilter<"Message"> | string
@@ -189,6 +205,8 @@ export type MessageWhereInput = {
 export type MessageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   roomId?: Prisma.SortOrder
@@ -202,6 +220,8 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.MessageWhereInput[]
   NOT?: Prisma.MessageWhereInput | Prisma.MessageWhereInput[]
   content?: Prisma.StringFilter<"Message"> | string
+  imageUrl?: Prisma.StringNullableFilter<"Message"> | string | null
+  type?: Prisma.EnumMessageTypeFilter<"Message"> | $Enums.MessageType
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   userId?: Prisma.StringFilter<"Message"> | string
   roomId?: Prisma.StringFilter<"Message"> | string
@@ -212,6 +232,8 @@ export type MessageWhereUniqueInput = Prisma.AtLeast<{
 export type MessageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrderInput | Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   roomId?: Prisma.SortOrder
@@ -226,6 +248,8 @@ export type MessageScalarWhereWithAggregatesInput = {
   NOT?: Prisma.MessageScalarWhereWithAggregatesInput | Prisma.MessageScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"Message"> | string
   content?: Prisma.StringWithAggregatesFilter<"Message"> | string
+  imageUrl?: Prisma.StringNullableWithAggregatesFilter<"Message"> | string | null
+  type?: Prisma.EnumMessageTypeWithAggregatesFilter<"Message"> | $Enums.MessageType
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Message"> | Date | string
   userId?: Prisma.StringWithAggregatesFilter<"Message"> | string
   roomId?: Prisma.StringWithAggregatesFilter<"Message"> | string
@@ -234,6 +258,8 @@ export type MessageScalarWhereWithAggregatesInput = {
 export type MessageCreateInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutMessagesInput
   room: Prisma.RoomCreateNestedOneWithoutMessagesInput
@@ -242,6 +268,8 @@ export type MessageCreateInput = {
 export type MessageUncheckedCreateInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   userId: string
   roomId: string
@@ -250,6 +278,8 @@ export type MessageUncheckedCreateInput = {
 export type MessageUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
   room?: Prisma.RoomUpdateOneRequiredWithoutMessagesNestedInput
@@ -258,6 +288,8 @@ export type MessageUpdateInput = {
 export type MessageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   roomId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -266,6 +298,8 @@ export type MessageUncheckedUpdateInput = {
 export type MessageCreateManyInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   userId: string
   roomId: string
@@ -274,12 +308,16 @@ export type MessageCreateManyInput = {
 export type MessageUpdateManyMutationInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
 export type MessageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
   roomId?: Prisma.StringFieldUpdateOperationsInput | string
@@ -298,6 +336,8 @@ export type MessageOrderByRelationAggregateInput = {
 export type MessageCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   roomId?: Prisma.SortOrder
@@ -306,6 +346,8 @@ export type MessageCountOrderByAggregateInput = {
 export type MessageMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   roomId?: Prisma.SortOrder
@@ -314,6 +356,8 @@ export type MessageMaxOrderByAggregateInput = {
 export type MessageMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   content?: Prisma.SortOrder
+  imageUrl?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   roomId?: Prisma.SortOrder
@@ -403,9 +447,15 @@ export type MessageUncheckedUpdateManyWithoutRoomNestedInput = {
   deleteMany?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
 }
 
+export type EnumMessageTypeFieldUpdateOperationsInput = {
+  set?: $Enums.MessageType
+}
+
 export type MessageCreateWithoutUserInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   room: Prisma.RoomCreateNestedOneWithoutMessagesInput
 }
@@ -413,6 +463,8 @@ export type MessageCreateWithoutUserInput = {
 export type MessageUncheckedCreateWithoutUserInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   roomId: string
 }
@@ -449,6 +501,8 @@ export type MessageScalarWhereInput = {
   NOT?: Prisma.MessageScalarWhereInput | Prisma.MessageScalarWhereInput[]
   id?: Prisma.StringFilter<"Message"> | string
   content?: Prisma.StringFilter<"Message"> | string
+  imageUrl?: Prisma.StringNullableFilter<"Message"> | string | null
+  type?: Prisma.EnumMessageTypeFilter<"Message"> | $Enums.MessageType
   createdAt?: Prisma.DateTimeFilter<"Message"> | Date | string
   userId?: Prisma.StringFilter<"Message"> | string
   roomId?: Prisma.StringFilter<"Message"> | string
@@ -457,6 +511,8 @@ export type MessageScalarWhereInput = {
 export type MessageCreateWithoutRoomInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutMessagesInput
 }
@@ -464,6 +520,8 @@ export type MessageCreateWithoutRoomInput = {
 export type MessageUncheckedCreateWithoutRoomInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   userId: string
 }
@@ -497,6 +555,8 @@ export type MessageUpdateManyWithWhereWithoutRoomInput = {
 export type MessageCreateManyUserInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   roomId: string
 }
@@ -504,6 +564,8 @@ export type MessageCreateManyUserInput = {
 export type MessageUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   room?: Prisma.RoomUpdateOneRequiredWithoutMessagesNestedInput
 }
@@ -511,6 +573,8 @@ export type MessageUpdateWithoutUserInput = {
 export type MessageUncheckedUpdateWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roomId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -518,6 +582,8 @@ export type MessageUncheckedUpdateWithoutUserInput = {
 export type MessageUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   roomId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -525,6 +591,8 @@ export type MessageUncheckedUpdateManyWithoutUserInput = {
 export type MessageCreateManyRoomInput = {
   id?: string
   content: string
+  imageUrl?: string | null
+  type?: $Enums.MessageType
   createdAt?: Date | string
   userId: string
 }
@@ -532,6 +600,8 @@ export type MessageCreateManyRoomInput = {
 export type MessageUpdateWithoutRoomInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutMessagesNestedInput
 }
@@ -539,6 +609,8 @@ export type MessageUpdateWithoutRoomInput = {
 export type MessageUncheckedUpdateWithoutRoomInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -546,6 +618,8 @@ export type MessageUncheckedUpdateWithoutRoomInput = {
 export type MessageUncheckedUpdateManyWithoutRoomInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   content?: Prisma.StringFieldUpdateOperationsInput | string
+  imageUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.EnumMessageTypeFieldUpdateOperationsInput | $Enums.MessageType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.StringFieldUpdateOperationsInput | string
 }
@@ -555,6 +629,8 @@ export type MessageUncheckedUpdateManyWithoutRoomInput = {
 export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   content?: boolean
+  imageUrl?: boolean
+  type?: boolean
   createdAt?: boolean
   userId?: boolean
   roomId?: boolean
@@ -565,6 +641,8 @@ export type MessageSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
 export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   content?: boolean
+  imageUrl?: boolean
+  type?: boolean
   createdAt?: boolean
   userId?: boolean
   roomId?: boolean
@@ -575,6 +653,8 @@ export type MessageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   content?: boolean
+  imageUrl?: boolean
+  type?: boolean
   createdAt?: boolean
   userId?: boolean
   roomId?: boolean
@@ -585,12 +665,14 @@ export type MessageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
 export type MessageSelectScalar = {
   id?: boolean
   content?: boolean
+  imageUrl?: boolean
+  type?: boolean
   createdAt?: boolean
   userId?: boolean
   roomId?: boolean
 }
 
-export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "createdAt" | "userId" | "roomId", ExtArgs["result"]["message"]>
+export type MessageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "content" | "imageUrl" | "type" | "createdAt" | "userId" | "roomId", ExtArgs["result"]["message"]>
 export type MessageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   room?: boolean | Prisma.RoomDefaultArgs<ExtArgs>
@@ -613,6 +695,8 @@ export type $MessagePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     content: string
+    imageUrl: string | null
+    type: $Enums.MessageType
     createdAt: Date
     userId: string
     roomId: string
@@ -1043,6 +1127,8 @@ export interface Prisma__MessageClient<T, Null = never, ExtArgs extends runtime.
 export interface MessageFieldRefs {
   readonly id: Prisma.FieldRef<"Message", 'String'>
   readonly content: Prisma.FieldRef<"Message", 'String'>
+  readonly imageUrl: Prisma.FieldRef<"Message", 'String'>
+  readonly type: Prisma.FieldRef<"Message", 'MessageType'>
   readonly createdAt: Prisma.FieldRef<"Message", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Message", 'String'>
   readonly roomId: Prisma.FieldRef<"Message", 'String'>

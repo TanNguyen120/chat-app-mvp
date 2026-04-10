@@ -1,4 +1,5 @@
 'use server';
+// This allows the response to "hang" open longer
 import { GoogleGenAI } from '@google/genai';
 import prisma from '@/lib/prisma';
 import { auth } from '@/auth';
