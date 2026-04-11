@@ -11,7 +11,7 @@ export default auth((req) => {
 
   // 1. Define your route types
   const isApiAuthRoute = nextUrl.pathname.startsWith('/api/auth');
-  const isAuthRoute = ['/login', '/register'].includes(nextUrl.pathname);
+  const isAuthRoute = ['/login', '/signup'].includes(nextUrl.pathname);
 
   // 2. Allow API auth routes always
   if (isApiAuthRoute) return null;

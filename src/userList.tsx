@@ -189,7 +189,10 @@ export default function UserList({
               <div className='relative shrink-0'>
                 <div className='w-12 h-12 rounded-full overflow-hidden border border-slate-100'>
                   <Image
-                    src={user.image || '/default-avatar.png'}
+                    src={
+                      user.image ||
+                      `https://api.dicebear.com/7.x/initials/svg?seed=${user.email}`
+                    }
                     alt={user.name || ''}
                     width={48}
                     height={48}
