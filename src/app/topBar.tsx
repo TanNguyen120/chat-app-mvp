@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useRef, useEffect } from 'react';
 import { useSession, signOut } from 'next-auth/react';
+import Image from 'next/image';
 import {
   MessageCircle,
   Search,
@@ -93,11 +94,16 @@ const TopBar = () => {
               <div className='w-8 h-8 bg-[#F7F9FB] rounded-full flex-none overflow-hidden relative border border-slate-100 group-hover:border-[#1E9A80] transition-colors'>
                 {/* Image from Google Session */}
                 {session?.user?.image ? (
-                  <img
-                    src={session.user.image}
+                  <Image
+                    src={
+                      session.user.image ||
+                      `https://api.dicebear.com/7.x/initials/svg?seed=${session.user.email}`
+                    }
                     alt={session.user.name || 'User'}
                     className='object-cover w-full h-full'
                     referrerPolicy='no-referrer' // Helps load Google images correctly
+                    width={30}
+                    height={30}
                   />
                 ) : (
                   // Fallback if no image (shows first initial)
